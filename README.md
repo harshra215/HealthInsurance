@@ -72,22 +72,7 @@ Miraj Sankdecha, a dedicated BCA student, embarked on the development of Caresur
 - **API Testing:** Postman
 - **Debugging Tools:** Chrome Development Tools
 
-### :man_technologist: Developer Information
 
-- **Developer:** Miraj Sankdecha
-- **Enrollment Number:** 210801300
-- **Program:** BCA (Bachelor of Computer Applications)
-- **Subject Code:** 21BCACC506
-- **Class:** C5
-- **Batch:** Y
-- **Roll Number:** 39
-
-### :phone: Contact Information
-
-- **Mobile:** +91 8511411930
-- **Email:** sankdechamiraj@gmail.com
-- **LinkedIn:** https://www.linkedin.com/in/mirajsankdecha/
-- **X:** https://x.com/mirajsankdecha
 
 ## :open_book: Documentation
 
