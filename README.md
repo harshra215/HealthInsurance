@@ -130,27 +130,4 @@ To set up and run the project, follow these steps:
    npm start
    ```
 
-## :handshake: Acknowledgments
 
-We extend our heartfelt gratitude to all individuals and resources that contributed to the successful completion of this project:
-
-- **Project Supervisor:** Dr. Prakash Gujarati, for unwavering guidance and mentorship.
-- **Educators:** Atmiya University's esteemed instructors and professors for providing a robust educational foundation.
-- **External Resources:** Authors, creators, and websites that provided valuable knowledge and tutorials.
-- **Support System:** Faculty members, family, and friends for their unwavering support throughout the project.
-
-This project has been a profound learning experience, and the contributions of all individuals mentioned above have been instrumental in shaping its successful outcome.
-
-In conclusion, "Caresure Health Insurance" is not only a testament to Miraj Sankdecha's dedication but also a powerful solution for managing health insurance policies, ensuring a seamless and secure experience for clients and administrators alike.
-
-## :man_astronaut: Show your support
-
-Give a ⭐️ if this project helped you!
-
-## :page_facing_up: License
-
-MIT/Massachusetts Institute of Technology(here [LICENSE](https://github.com/mirajsankdecha/Caresure-Health-Insurance/blob/development/LICENSE))
-
-The Caresure Health Insurance code is licensed by Massachusetts Institute of Technology.
-
-By contributing to Caresure Health Insurance, you will be agreeing that your contributions will be licensed under its Massachusetts Institute of Technology(MIT).
