@@ -8,20 +8,7 @@
   Caresure Health Insurance
 </h1>
 
-<p align="center">
-  <a href="https://portfolio-master-sable-seven.vercel.app/" target="_blank">
-    <img src="https://img.shields.io/badge/Website-DC143C?style=for-the-badge&logo=medium&logoColor=white" alt="Miraj Sankdecha Website" />
-  </a>
-  <a href="https://www.linkedin.com/in/mirajsankdecha/" target="_blank">
-    <img src="https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white" alt="Miraj Sankdecha LinkedIn" />
-  </a>
-  <a href="https://twitter.com/mirajsankdecha" target="_blank">
-    <img src="https://img.shields.io/badge/Twitter-1DA1F2?style=for-the-badge&logo=twitter&logoColor=white" alt="Miraj Sankdecha Twitter" />
-  </a>
-  <a href="https://www.instagram.com/mirajgajjar731/?igshid=MzNlNGNkZWQ4Mg%3D%3D" target="_blank">
-    <img src="https://img.shields.io/badge/Instagram-fe4164?style=for-the-badge&logo=instagram&logoColor=white" alt="Miraj Sankdecha Instagram" />
-  </a> 
-</p>
+
 
 ---
 
@@ -41,11 +28,11 @@
 
 ## :arrow_right: **Live App Demo** : [https://caresure-health-insurance.vercel.app/](https://caresure-health-insurance.vercel.app/)
 
-`username : miraj & password : 123`
+
 
 ## :pencil: Introduction
 
-**"Caresure Health Insurance"** is a cutting-edge project developed by **Miraj Sankdecha** during his academic tenure at Atmiya University-Rajkot. This project showcases the power of the MERN stack, encompassing **MongoDB, Express, React, and Node.js**, to create an innovative health insurance platform. This comprehensive solution caters to both clients seeking health insurance coverage and administrators responsible for policy management and claims processing.
+
 
 ## :mag: Project Overview
 
