@@ -4,114 +4,153 @@ const ClaimUpload = () => {
   const [claimType, setClaimType] = useState("");
   const [policyNumber, setPolicyNumber] = useState("");
   const [memberName, setMemberName] = useState("");
-  const [setUploadFile] = useState(null);
+  const [uploadFile, setUploadFile] = useState(null);
+  const [isSubmitted, setIsSubmitted] = useState(false);
 
   const handleFormSubmit = (e) => {
     e.preventDefault();
 
-    // Assuming you would have some function to handle form submission and file upload
-    // You can send the form data and file to the server using API calls
+    // Mock form submission logic (replace with actual API call)
+    console.log({
+      claimType,
+      policyNumber,
+      memberName,
+      uploadFile: uploadFile ? uploadFile.name : null,
+    });
 
-    // After successful submission, you can clear the form fields
+    // Show success message and reset form
+    setIsSubmitted(true);
     setClaimType("");
     setPolicyNumber("");
     setMemberName("");
     setUploadFile(null);
 
-    // Show a success message or redirect to a success page
+    // Reset success message after 5 seconds
+    setTimeout(() => setIsSubmitted(false), 5000);
   };
 
   return (
-    <div>
-      <h2 className="text-2xl font-semibold mb-4 text-center">
-        Upload Health Insurance Claim Documents
-      </h2>
-      <form onSubmit={handleFormSubmit} className="mb-4">
-        <div className="mb-4">
-          <label className="block font-medium" htmlFor="claimType">
-            Claim Type:
-          </label>
-          <select
-            id="claimType"
-            name="claimType"
-            className="w-full border rounded-lg py-2 px-3 focus:outline-none focus:ring focus:border-blue-500"
-            value={claimType}
-            onChange={(e) => setClaimType(e.target.value)}
-            required
-          >
-            <option value="">Select Claim Type</option>
-            <option value="Medical">Medical</option>
-            <option value="Accident">Accident</option>
-            {/* Add more claim types as needed */}
-          </select>
-        </div>
-        <div className="mb-4">
-          <label className="block font-medium" htmlFor="policyNumber">
-            Policy Number:
-          </label>
-          <input
-            type="text"
-            id="policyNumber"
-            name="policyNumber"
-            className="w-full border rounded-lg py-2 px-3 focus:outline-none focus:ring focus:border-blue-500"
-            value={policyNumber}
-            onChange={(e) => setPolicyNumber(e.target.value)}
-            required
-          />
-        </div>
-        <div className="mb-4">
-          <label className="block font-medium" htmlFor="memberName">
-            Member Name:
-          </label>
-          <input
-            type="text"
-            id="memberName"
-            name="memberName"
-            className="w-full border rounded-lg py-2 px-3 focus:outline-none focus:ring focus:border-blue-500"
-            value={memberName}
-            onChange={(e) => setMemberName(e.target.value)}
-            required
-          />
-        </div>
-        <div className="mb-4">
-          <label className="block font-medium" htmlFor="uploadFile">
-            Upload Claim Documents:
-          </label>
-          <input
-            type="file"
-            id="uploadFile"
-            name="uploadFile"
-            className="w-full border rounded-lg py-2 px-3 focus:outline-none focus:ring focus:border-blue-500"
-            onChange={(e) => setUploadFile(e.target.files[0])}
-            required
-          />
-        </div>
-        <button
-          type="submit"
-          className="bg-blue-500 text-white px-4 py-2 rounded-lg"
-        >
-          Submit Claim
-        </button>
-      </form>
-      <div>
-        <p className="font-medium">Additional Information:</p>
-        <p>
-          To process your health insurance claim efficiently, please make sure
-          to upload all relevant documents, including medical reports, bills,
-          and any other required paperwork.
+    <section className="min-h-screen bg-gradient-to-b from-blue-50 to-white py-12 md:py-16">
+      <div className="container mx-auto px-4 max-w-3xl">
+        {/* Header */}
+        <h2 className="text-3xl md:text-4xl font-bold text-gray-900 text-center mb-8 tracking-tight">
+          Upload Your Claim Documents
+        </h2>
+        <p className="text-lg text-gray-600 text-center mb-12 max-w-2xl mx-auto">
+          Submit your health insurance claim documents quickly and securely.
         </p>
-        <p>
-          Our claim settlement team will review your submitted documents and get
-          back to you with the status of your claim within the shortest possible
-          time.
-        </p>
-        <p>
-          For any assistance or queries related to claim submission or the
-          claims process, please contact our 24/7 helpline at the provided
-          helpline number for your respective state.
-        </p>
+
+        {/* Main Content */}
+        <div className="bg-white p-6 md:p-8 rounded-xl shadow-lg">
+          {isSubmitted ? (
+            <div className="text-center py-6">
+              <h3 className="text-2xl font-semibold text-green-600 mb-4">
+                Documents Uploaded Successfully!
+              </h3>
+              <p className="text-gray-600">
+                Our team will review your submission and get back to you soon.
+              </p>
+            </div>
+          ) : (
+            <>
+              {/* Form */}
+              <form onSubmit={handleFormSubmit} className="space-y-6">
+                <div>
+                  <label htmlFor="claimType" className="block text-sm font-medium text-gray-700 mb-1">
+                    Claim Type
+                  </label>
+                  <select
+                    id="claimType"
+                    value={claimType}
+                    onChange={(e) => setClaimType(e.target.value)}
+                    className="w-full bg-gray-50 border border-gray-300 rounded-lg py-2.5 px-3 text-gray-800 focus:ring-2 focus:ring-blue-200 focus:border-blue-500 transition-all duration-200"
+                    required
+                  >
+                    <option value="">Select Claim Type</option>
+                    <option value="Medical">Medical</option>
+                    <option value="Accident">Accident</option>
+                    <option value="Dental">Dental</option>
+                    <option value="Vision">Vision</option>
+                  </select>
+                </div>
+                <div>
+                  <label htmlFor="policyNumber" className="block text-sm font-medium text-gray-700 mb-1">
+                    Policy Number
+                  </label>
+                  <input
+                    type="text"
+                    id="policyNumber"
+                    value={policyNumber}
+                    onChange={(e) => setPolicyNumber(e.target.value)}
+                    className="w-full bg-gray-50 border border-gray-300 rounded-lg py-2.5 px-3 text-gray-800 focus:ring-2 focus:ring-blue-200 focus:border-blue-500 transition-all duration-200"
+                    placeholder="e.g., P/000000/00/0000/000000"
+                    required
+                  />
+                </div>
+                <div>
+                  <label htmlFor="memberName" className="block text-sm font-medium text-gray-700 mb-1">
+                    Member Name
+                  </label>
+                  <input
+                    type="text"
+                    id="memberName"
+                    value={memberName}
+                    onChange={(e) => setMemberName(e.target.value)}
+                    className="w-full bg-gray-50 border border-gray-300 rounded-lg py-2.5 px-3 text-gray-800 focus:ring-2 focus:ring-blue-200 focus:border-blue-500 transition-all duration-200"
+                    placeholder="Enter full name"
+                    required
+                  />
+                </div>
+                <div>
+                  <label htmlFor="uploadFile" className="block text-sm font-medium text-gray-700 mb-1">
+                    Upload Claim Documents
+                  </label>
+                  <input
+                    type="file"
+                    id="uploadFile"
+                    onChange={(e) => setUploadFile(e.target.files[0])}
+                    className="w-full bg-gray-50 border border-gray-300 rounded-lg py-2 px-3 text-gray-800 focus:ring-2 focus:ring-blue-200 focus:border-blue-500 transition-all duration-200"
+                    accept=".pdf,.jpg,.jpeg,.png"
+                    required
+                  />
+                  {uploadFile && (
+                    <p className="text-sm text-gray-500 mt-2">
+                      Selected file: {uploadFile.name}
+                    </p>
+                  )}
+                </div>
+                <button
+                  type="submit"
+                  className="w-full bg-blue-600 text-white font-semibold py-3 px-6 rounded-full hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors duration-300 shadow-md"
+                >
+                  Submit Claim
+                </button>
+              </form>
+
+              {/* Additional Information */}
+              <div className="mt-8 space-y-4">
+                <h3 className="text-xl font-semibold text-gray-900">
+                  Important Information
+                </h3>
+                <p className="text-gray-600 leading-relaxed">
+                  To ensure a smooth claim process, please upload all relevant documents such as medical reports, bills, and any additional paperwork required for your claim type.
+                </p>
+                <p className="text-gray-600 leading-relaxed">
+                  Our claim settlement team will review your submission and provide an update within the shortest possible time.
+                </p>
+                <p className="text-gray-600 leading-relaxed">
+                  Need help? Contact our 24/7 helpline at{" "}
+                  <a href="tel:+1800-123-4567" className="text-blue-600 hover:underline font-medium">
+                    1-800-123-4567
+                  </a>{" "}
+                  for immediate assistance.
+                </p>
+              </div>
+            </>
+          )}
+        </div>
       </div>
-    </div>
+    </section>
   );
 };
 

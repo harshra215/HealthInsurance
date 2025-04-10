@@ -39,3 +39,16 @@ app.use("/auth", authRoutes);
 app.listen(port, () => {
   console.log("Server is running on port " + port);
 });
+
+app.post("/plans/add", (req, res) => {
+  const newPlan = {
+    id: String(plans.length + 1), // Simple ID generation; use UUID or database auto-increment in production
+    ...req.body,
+  };
+  plans.push(newPlan);
+  res.status(201).json(newPlan); // Return the added plan
+});
+
+app.get("/plans/getAll", (req, res) => {
+  res.json(plans);
+});

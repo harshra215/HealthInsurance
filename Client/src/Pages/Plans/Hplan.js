@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import axios from "axios"; // Import Axios
-import { useAuth } from "./Auth/auth"; // Import useAuth from your custom hook
+import axios from "axios";
+import { useAuth } from "./Auth/auth";
 
 const Hplan = () => {
   const [selectedCategory, setSelectedCategory] = useState("All categories");
@@ -9,6 +9,24 @@ const Hplan = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [filteredPlans, setFilteredPlans] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [newPlan, setNewPlan] = useState({
+    title: "",
+    img: "",
+    content1: "",
+    content2: "",
+    content3: "",
+    category: "Family",
+  });
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  const { user } = useAuth();
+
+  const categories = [
+    "All categories",
+    "Family",
+    "Diabetes",
+    "Cardiac",
+    "Disease Specific",
+  ];
 
   const handleCategorySelect = (category) => {
     setSelectedCategory(category);
@@ -23,229 +41,296 @@ const Hplan = () => {
     setIsDropdownOpen(!isDropdownOpen);
   };
 
-  useEffect(() => {
-    // Fetch data from your Express API
-    axios
-      .get("http://localhost:5000/plans/getAll")
-      .then((response) => {
-        // Process the data and set it in your state
-        const plansData = response.data;
-        const filteredPlans = plansData.filter((plan) =>
-          plan.title.toLowerCase().includes(searchQuery.toLowerCase())
-        );
-        setFilteredPlans(filteredPlans);
-        setLoading(false);
-      })
-      .catch((error) => {
-        console.error("Error fetching data:", error);
-        setLoading(false);
-      });
-  }, [searchQuery]); // Include searchQuery as a dependency
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setNewPlan((prev) => ({ ...prev, [name]: value }));
+  };
 
-  // Fetch the user object from useAuth hook
-  const { user } = useAuth();
+  const fetchPlans = async () => {
+    setLoading(true);
+    try {
+      const response = await axios.get("http://localhost:5000/plans/getAll");
+      const plansData = response.data;
+      const filtered = plansData.filter((plan) => {
+        const matchesSearch = plan.title.toLowerCase().includes(searchQuery.toLowerCase());
+        const matchesCategory =
+          selectedCategory === "All categories" || plan.category === selectedCategory;
+        return matchesSearch && matchesCategory;
+      });
+      setFilteredPlans(filtered);
+    } catch (error) {
+      console.error("Error fetching plans:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleFormSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await axios.post("http://localhost:5000/plans/add", newPlan);
+      setNewPlan({
+        title: "",
+        img: "",
+        content1: "",
+        content2: "",
+        content3: "",
+        category: "Family",
+      }); // Reset form
+      setIsFormOpen(false); // Close form
+      fetchPlans(); // Refetch plans to update the list
+      alert("Plan added successfully!");
+    } catch (error) {
+      console.error("Error adding plan:", error);
+      alert("Failed to add plan. Please try again.");
+    }
+  };
+
+  useEffect(() => {
+    fetchPlans(); // Initial fetch on mount and when search/category changes
+  }, [searchQuery, selectedCategory]);
+
   return (
-    <div>
-      <div className="flex flex-col items-center justify-center">
-        <div className="text-blue-600 font-bold my-5">ALL HEALTH PLANS</div>
-        <div className="font-bold my-3 text-5xl">
-          Best Health Insurance Plans to Secure Yourself
+    <section className="min-h-screen bg-gradient-to-b from-blue-50 to-white py-12 md:py-16">
+      <div className="container mx-auto px-4">
+        {/* Header */}
+        <div className="text-center mb-12">
+          <span className="text-blue-600 font-semibold text-sm uppercase tracking-wider">
+            All Health Plans
+          </span>
+          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mt-2 tracking-tight">
+            Secure Your Future with the Best Health Plans
+          </h1>
+          <p className="text-lg text-gray-600 mt-4 max-w-2xl mx-auto">
+            Explore tailored insurance options designed for every need and stage of life.
+          </p>
+          {user && (
+            <button
+              onClick={() => setIsFormOpen(true)}
+              className="mt-6 bg-blue-600 text-white font-semibold py-2 px-6 rounded-full hover:bg-blue-700 transition-colors duration-200"
+            >
+              Add New Plan
+            </button>
+          )}
         </div>
-        <form onSubmit={(e) => e.preventDefault()}>
-          {/* ... (your search and filter dropdown code) */}
-          <div className="flex items-center justify-center w-full my-5">
-            <div className="relative flex-shrink-0">
-              <button
-                id="dropdown-button"
-                onClick={toggleDropdown}
-                className="z-10 inline-flex items-center px-4 py-2 text-sm font-medium text-center text-gray-900 bg-gray-100 border border-gray-300 rounded-l-lg hover:bg-gray-200 focus:ring-4 focus:outline-none focus:ring-gray-100"
-                type="button"
-              >
-                {selectedCategory}{" "}
-                <svg
-                  className="w-2.5 h-2.5 ml-2.5"
-                  aria-hidden="true"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 10 6"
-                >
-                  <path
-                    stroke="currentColor"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="m1 1 4 4 4-4"
+
+        {/* Add Plan Form (Modal) */}
+        {isFormOpen && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-white p-6 rounded-xl shadow-lg w-full max-w-md">
+              <h2 className="text-2xl font-semibold text-gray-900 mb-4">Add New Plan</h2>
+              <form onSubmit={handleFormSubmit} className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Title</label>
+                  <input
+                    type="text"
+                    name="title"
+                    value={newPlan.title}
+                    onChange={handleInputChange}
+                    className="w-full bg-gray-50 border border-gray-300 rounded-lg py-2 px-3 focus:ring-2 focus:ring-blue-200 focus:border-blue-500"
+                    required
                   />
-                </svg>
-              </button>
-              {isDropdownOpen && (
-                <div
-                  id="dropdown"
-                  className="z-10 absolute mt-2 w-48 bg-white divide-y divide-gray-100 rounded-lg shadow"
-                >
-                  <ul
-                    className="py-3 text-sm text-gray-700"
-                    aria-labelledby="dropdown-button"
-                  >
-                    <li>
-                      <button
-                        type="button"
-                        onClick={() => handleCategorySelect("All categories")}
-                        className={`inline-flex w-full px-4 py-2 hover:bg-gray-100 ${
-                          selectedCategory === "All categories"
-                            ? "bg-gray-100"
-                            : ""
-                        }`}
-                      >
-                        All categories
-                      </button>
-                    </li>
-                    <li>
-                      <button
-                        type="button"
-                        onClick={() => handleCategorySelect("Family")}
-                        className={`inline-flex w-full px-4 py-2 hover:bg-gray-100 ${
-                          selectedCategory === "Family" ? "bg-gray-100" : ""
-                        }`}
-                      >
-                        Family
-                      </button>
-                    </li>
-                    <li>
-                      <button
-                        type="button"
-                        onClick={() => handleCategorySelect("Diabetes")}
-                        className={`inline-flex w-full px-4 py-2 hover:bg-gray-100 ${
-                          selectedCategory === "Diabetes" ? "bg-gray-100" : ""
-                        }`}
-                      >
-                        Diabetes
-                      </button>
-                    </li>
-                    <li>
-                      <button
-                        type="button"
-                        onClick={() => handleCategorySelect("Cardiac")}
-                        className={`inline-flex w-full px-4 py-2 hover:bg-gray-100 ${
-                          selectedCategory === "Cardiac" ? "bg-gray-100" : ""
-                        }`}
-                      >
-                        Cardiac
-                      </button>
-                    </li>
-                    <li>
-                      <button
-                        type="button"
-                        onClick={() => handleCategorySelect("Disease Specific")}
-                        className={`inline-flex w-full px-4 py-2 hover:bg-gray-100 ${
-                          selectedCategory === "Disease Specific"
-                            ? "bg-gray-100"
-                            : ""
-                        }`}
-                      >
-                        Disease Specific
-                      </button>
-                    </li>
-                  </ul>
                 </div>
-              )}
-            </div>
-            <div className="relative w-[700px]">
-              <input
-                type="search"
-                id="search-dropdown"
-                value={searchQuery}
-                onChange={handleSearchChange}
-                className="block w-full px-4 py-2.5 text-sm text-gray-900 bg-gray-200 rounded-r-lg border-l-2 border-blue-500 focus:ring-blue-500 focus:border-blue-500"
-                placeholder="Search Family, Disease Specific, Cardiac, Diabetes..."
-                required=""
-              />
-              <button
-                type="submit"
-                className="absolute top-0 right-0 px-3 py-2 text-sm font-medium text-white bg-blue-500 rounded-r-lg hover:bg-blue-600 focus:ring-blue-300 focus:outline-none focus:ring"
-              >
-                <svg
-                  className="w-4 h-6"
-                  aria-hidden="true"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 20 20"
-                >
-                  <path
-                    stroke="currentColor"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Image URL</label>
+                  <input
+                    type="text"
+                    name="img"
+                    value={newPlan.img}
+                    onChange={handleInputChange}
+                    className="w-full bg-gray-50 border border-gray-300 rounded-lg py-2 px-3 focus:ring-2 focus:ring-blue-200 focus:border-blue-500"
+                    placeholder="https://example.com/image.jpg"
+                    required
                   />
-                </svg>
-                <span className="sr-only">Search</span>
-              </button>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Content 1</label>
+                  <input
+                    type="text"
+                    name="content1"
+                    value={newPlan.content1}
+                    onChange={handleInputChange}
+                    className="w-full bg-gray-50 border border-gray-300 rounded-lg py-2 px-3 focus:ring-2 focus:ring-blue-200 focus:border-blue-500"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Content 2</label>
+                  <input
+                    type="text"
+                    name="content2"
+                    value={newPlan.content2}
+                    onChange={handleInputChange}
+                    className="w-full bg-gray-50 border border-gray-300 rounded-lg py-2 px-3 focus:ring-2 focus:ring-blue-200 focus:border-blue-500"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Content 3</label>
+                  <input
+                    type="text"
+                    name="content3"
+                    value={newPlan.content3}
+                    onChange={handleInputChange}
+                    className="w-full bg-gray-50 border border-gray-300 rounded-lg py-2 px-3 focus:ring-2 focus:ring-blue-200 focus:border-blue-500"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Category</label>
+                  <select
+                    name="category"
+                    value={newPlan.category}
+                    onChange={handleInputChange}
+                    className="w-full bg-gray-50 border border-gray-300 rounded-lg py-2 px-3 focus:ring-2 focus:ring-blue-200 focus:border-blue-500"
+                  >
+                    {categories.slice(1).map((cat) => (
+                      <option key={cat} value={cat}>
+                        {cat}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className="flex justify-end gap-4">
+                  <button
+                    type="button"
+                    onClick={() => setIsFormOpen(false)}
+                    className="px-4 py-2 text-gray-600 hover:text-gray-800"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className="px-4 py-2 bg-blue-600 text-white font-semibold rounded-full hover:bg-blue-700 transition-colors duration-200"
+                  >
+                    Submit Plan
+                  </button>
+                </div>
+              </form>
             </div>
           </div>
-        </form>
+        )}
 
-        {loading ? (
-          <div>Loading...</div>
-        ) : // Render your data here
-        filteredPlans.length === 0 ? (
-          <div className="text-red-600 font-bold">No plans found.</div>
-        ) : (
-          filteredPlans.map((item) => (
-            <div key={item.id} className="max-w-7xl">
-              <div className="overflow-hidden bg-white m-4 shadow-lg flex flex-col md:flex-row">
-                <div className="w-48 h-48 md:w-1/3 md:h-auto">
-                  <div
-                    className="object-cover w-full h-full"
-                    style={{
-                      width: "100%",
-                      height: "100%",
-                    }}
+        {/* Search and Filter */}
+        <div className="flex flex-col md:flex-row items-center justify-center gap-4 mb-12">
+          <div className="relative w-full md:w-64">
+            <button
+              onClick={toggleDropdown}
+              className="w-full bg-white text-gray-800 font-medium py-3 px-4 rounded-lg border border-gray-300 hover:bg-gray-100 focus:ring-2 focus:ring-blue-200 transition-all duration-200 flex items-center justify-between"
+            >
+              {selectedCategory}
+              <svg
+                className={`w-4 h-4 transition-transform duration-200 ${isDropdownOpen ? "rotate-180" : ""}`}
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M19 9l-7 7-7-7"
+                />
+              </svg>
+            </button>
+            {isDropdownOpen && (
+              <div className="absolute z-10 mt-2 w-full bg-white rounded-lg shadow-lg border border-gray-200">
+                {categories.map((category) => (
+                  <button
+                    key={category}
+                    onClick={() => handleCategorySelect(category)}
+                    className={`w-full text-left px-4 py-2 text-gray-700 hover:bg-blue-50 transition-colors duration-200 ${
+                      selectedCategory === category ? "bg-blue-100 font-semibold" : ""
+                    }`}
                   >
-                    <img
-                      src={item.img}
-                      alt="Caresure Health Insurance Plans"
-                      className="w-full h-full"
-                      style={{
-                        objectFit: "cover",
-                      }}
-                    />
-                  </div>
+                    {category}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+          <div className="relative w-full md:w-96">
+            <input
+              type="search"
+              value={searchQuery}
+              onChange={handleSearchChange}
+              className="w-full bg-white text-gray-800 py-3 px-4 pr-12 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-200 focus:border-blue-500 transition-all duration-200"
+              placeholder="Search by plan name or category..."
+            />
+            <svg
+              className="absolute right-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-500"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+              />
+            </svg>
+          </div>
+        </div>
+
+        {/* Plans List */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {loading ? (
+            <div className="col-span-full text-center text-gray-600 text-lg">
+              Loading plans...
+            </div>
+          ) : filteredPlans.length === 0 ? (
+            <div className="col-span-full text-center text-red-600 font-semibold text-lg">
+              No plans found matching your criteria.
+            </div>
+          ) : (
+            filteredPlans.map((plan) => (
+              <div
+                key={plan.id || plan._id} // Handle both id formats
+                className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300"
+              >
+                <div className="h-48 overflow-hidden">
+                  <img
+                    src={plan.img}
+                    alt={`${plan.title} Health Plan`}
+                    className="w-full h-full object-cover"
+                  />
                 </div>
-                <div className="grid p-4 w-full md:w-2/3">
-                  <div className="font-bold text-black mt-6 text-xl h-14">
-                    {item.title}
+                <div className="p-6">
+                  <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                    {plan.title}
+                  </h3>
+                  <div className="text-gray-600 text-sm space-y-1 mb-4 h-20 overflow-hidden">
+                    <p>{plan.content1}</p>
+                    <p>{plan.content2}</p>
+                    <p>{plan.content3}</p>
                   </div>
-                  <div className="text-gray-500 my-2 text-md leading-6 h-24 overflow-hidden">
-                    <p className="font-medium">{item.content1}</p>
-                    <p className="font-medium">{item.content2}</p>
-                    <p className="font-medium">{item.content3}</p>
-                  </div>
-                  <div className="flex items-center h-12">
-                    {/* Add conditional rendering for the "View Plan" button */}
+                  <div className="flex justify-end">
                     {user ? (
                       <Link
-                        to={`/plans/${item._id}`}
-                        className="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-white bg-orange-500 rounded-md hover:bg-orange-600 focus:ring-orange-300 focus:outline-none focus:ring h-10 w-32"
+                        to={`/plans/${plan._id || plan.id}`} // Handle both _id and id
+                        className="inline-flex items-center px-4 py-2 bg-orange-500 text-white font-semibold rounded-full hover:bg-orange-600 focus:ring-2 focus:ring-orange-400 focus:ring-offset-2 transition-colors duration-200"
                       >
                         View Plan
                       </Link>
                     ) : (
                       <Link
                         to="/login"
-                        className="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-white bg-blue-500 rounded-md hover:bg-blue-600 focus:ring-blue-300 focus:outline-none focus:ring h-10 w-32"
+                        className="inline-flex items-center px-4 py-2 bg-blue-600 text-white font-semibold rounded-full hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors duration-200"
                       >
-                        Sign In to View Plan
+                        Sign In
                       </Link>
                     )}
                   </div>
                 </div>
               </div>
-            </div>
-          ))
-        )}
+            ))
+          )}
+        </div>
       </div>
-    </div>
+    </section>
   );
 };
 

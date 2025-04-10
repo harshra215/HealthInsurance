@@ -9,6 +9,8 @@ import Tsp from './Tsp';
 import Review from './Review';
 import BenefitIsu from './BenefitIsu';
 import Accordian from './Accordian';
+import Chatbot from './Chatbot';
+
 const Home = () => {
   return (
     <div >
@@ -22,6 +24,7 @@ const Home = () => {
       <Review/> 
       <BenefitIsu /> 
       <Accordian />
+      <Chatbot />
     </div>
   );
 }

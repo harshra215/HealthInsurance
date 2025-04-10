@@ -1,5 +1,4 @@
 import React, { createContext, useState, useContext } from "react";
-import axios from "axios";
 
 const AuthContext = createContext();
 
@@ -8,25 +7,15 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (username, password) => {
     try {
-      const response = await axios.post(
-        "http://localhost:5000/auth/user/login",
-        {
-          username,
-          password,
-        }
-      );
-      
-
-      if (response.data.token) {
-        // Set the user and token in state
+      // Skip actual authentication and allow any username/password
+      if (username && password) {
         setUser({
           username,
-          token: response.data.token,
+          token: "dummy-token", // Use a dummy token
         });
-        // Store the token in localStorage for persistence
-        localStorage.setItem("token", response.data.token);
+        localStorage.setItem("token", "dummy-token");
       } else {
-        throw new Error("Invalid username or password");
+        throw new Error("Please provide a username and password");
       }
     } catch (error) {
       console.error("Error during login:", error);
@@ -45,7 +34,8 @@ export const AuthProvider = ({ children }) => {
     <AuthContext.Provider value={{ user, login, logout }}>
       {children}
     </AuthContext.Provider>
-  );};
+  );
+};
 
 export const useAuth = () => {
   return useContext(AuthContext);

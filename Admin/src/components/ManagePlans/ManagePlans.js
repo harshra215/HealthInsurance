@@ -8,12 +8,12 @@ const ManagePlans = () => {
   const [selectedPlan, setSelectedPlan] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredPlans, setFilteredPlans] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const filterPlans = useCallback(() => {
     const filtered = plans.filter((plan) => {
       const title = plan.title || "";
       const description = plan.description || "";
-
       return (
         title.toLowerCase().includes(searchTerm.toLowerCase()) ||
         description.toLowerCase().includes(searchTerm.toLowerCase())
@@ -23,18 +23,21 @@ const ManagePlans = () => {
   }, [searchTerm, plans]);
 
   useEffect(() => {
-    axios
-      .get("http://localhost:5000/plans/getAll")
-      .then((response) => {
+    const fetchPlans = async () => {
+      try {
+        const response = await axios.get("http://localhost:5000/plans/getAll");
         setPlans(response.data);
-      })
-      .catch((error) => {
+        setLoading(false);
+      } catch (error) {
         console.error("Error fetching plans:", error);
-      });
+        setLoading(false);
+      }
+    };
+    fetchPlans();
   }, []);
 
   useEffect(() => {
-    filterPlans(); // Call it immediately to filter plans on component mount
+    filterPlans();
   }, [searchTerm, plans, filterPlans]);
 
   const handleAddClick = () => {
@@ -52,105 +55,199 @@ const ManagePlans = () => {
     setSelectedPlan(null);
   };
 
-  const handleDelete = (planId) => {
-    axios
-      .delete(`http://localhost:5000/plans/${planId}`)
-      .then(() => {
-        // Refresh the plan data after deleting the plan
-        axios
-          .get("http://localhost:5000/plans/getAll")
-          .then((response) => {
-            setPlans(response.data);
-          })
-          .catch((error) => {
-            console.error("Error fetching plans:", error);
-          });
-      })
-      .catch((error) => {
-        console.error("Error deleting plan:", error);
-      });
+  const handleDelete = async (planId) => {
+    try {
+      await axios.delete(`http://localhost:5000/plans/${planId}`);
+      const response = await axios.get("http://localhost:5000/plans/getAll");
+      setPlans(response.data);
+    } catch (error) {
+      console.error("Error deleting plan:", error);
+    }
   };
 
   return (
-    <div className="bg-gray-100 min-h-screen p-6">
-      <div className="max-w-6xl mx-auto bg-white rounded-lg shadow-md p-6 mb-6">
-        <h1 className="text-3xl font-semibold mb-6 text-center">
-          Manage Health Insurance Plans
-        </h1>
-        <div className="mb-4">
-          <input
-            type="text"
-            placeholder="Search plans by title or description"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full py-2 px-3 border rounded-lg"
-          />
-        </div>
-        <div className="mb-4 flex justify-end">
-          <button
-            className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg"
-            onClick={handleAddClick}
+    <div className="min-h-screen bg-gray-50 p-4 sm:p-6">
+      <div className="max-w-6xl mx-auto bg-white rounded-xl shadow-lg border border-gray-200">
+        <div className="p-6">
+          <h1
+            className="
+              text-3xl 
+              sm:text-4xl 
+              font-bold 
+              text-gray-800 
+              mb-6 
+              text-center 
+              animate-fade-in
+            "
           >
-            Add Plan
-          </button>
-        </div>
-        <div className="overflow-x-auto">
-          <table className="min-w-full">
-            <thead>
-              <tr>
-                <th className="px-6 py-3 text-left text-md font-medium text-gray-500 uppercase tracking-wider">
-                  Serial Number
-                </th>
-                <th className="px-6 py-3 text-left text-md font-medium text-gray-500 uppercase tracking-wider">
-                  Plan Titles
-                </th>
-                <th className="px-6 py-3 text-left text-md font-medium text-gray-500 uppercase tracking-wider">
-                  Description
-                </th>
-                <th className="px-6 py-3 text-left text-md font-medium text-gray-500 uppercase tracking-wider">
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredPlans.map((plan, index) => (
-                <tr key={plan.id}>
-                  <td className="px-6 py-4 whitespace-nowrap text-lg text-gray-900">
-                    {index + 1}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-lg text-gray-900">
-                    {plan.title}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-lg text-gray-900">
-                    {plan.description}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-md text-gray-900">
-                    <button
-                      className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-1 px-2 rounded-full mr-2"
-                      onClick={() => handleEditClick(plan)}
+            Manage Health Insurance Plans
+          </h1>
+
+          {/* Search Bar */}
+          <div className="mb-6">
+            <input
+              type="text"
+              placeholder="Search plans by title or description"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="
+                w-full 
+                px-4 
+                py-3 
+                border 
+                border-gray-300 
+                rounded-lg 
+                text-gray-700 
+                placeholder-gray-400 
+                focus:ring-2 
+                focus:ring-blue-500 
+                focus:border-transparent 
+                transition-all 
+                duration-200
+              "
+            />
+          </div>
+
+          {/* Add Plan Button */}
+          <div className="mb-6 flex justify-end">
+            <button
+              onClick={handleAddClick}
+              className="
+                bg-blue-600 
+                hover:bg-blue-700 
+                text-white 
+                font-semibold 
+                py-2 
+                px-4 
+                rounded-lg 
+                transition-all 
+                duration-200 
+                focus:ring-2 
+                focus:ring-blue-500 
+                focus:ring-offset-2
+              "
+            >
+              Add Plan
+            </button>
+          </div>
+
+          {/* Plans Table */}
+          <div className="overflow-x-auto">
+            {loading ? (
+              <p className="text-center text-gray-500 py-6">Loading plans...</p>
+            ) : filteredPlans.length === 0 ? (
+              <p className="text-center text-gray-500 py-6">
+                No plans found.
+              </p>
+            ) : (
+              <table className="min-w-full divide-y divide-gray-200">
+                <thead className="bg-blue-700 text-white">
+                  <tr>
+                    {[
+                      "Serial Number",
+                      "Plan Title",
+                      "Description",
+                      "Actions",
+                    ].map((header) => (
+                      <th
+                        key={header}
+                        className="
+                          py-3 
+                          px-6 
+                          text-left 
+                          text-sm 
+                          font-semibold 
+                          uppercase 
+                          tracking-wider
+                        "
+                      >
+                        {header}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-200">
+                  {filteredPlans.map((plan, index) => (
+                    <tr
+                      key={plan.id}
+                      className="hover:bg-gray-50 transition-all duration-200"
                     >
-                      Edit
-                    </button>
-                    <button
-                      className="bg-red-500 hover:bg-red-600 text-white font-semibold py-1 px-2 rounded-full"
-                      onClick={() => handleDelete(plan.id)}
-                    >
-                      Delete
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+                      <td className="px-6 py-4 text-gray-700">
+                        {index + 1}
+                      </td>
+                      <td className="px-6 py-4 text-gray-700 truncate max-w-xs">
+                        {plan.title}
+                      </td>
+                      <td className="px-6 py-4 text-gray-700 truncate max-w-md">
+                        {plan.description}
+                      </td>
+                      <td className="px-6 py-4 space-x-3">
+                        <button
+                          onClick={() => handleEditClick(plan)}
+                          className="
+                            bg-blue-600 
+                            hover:bg-blue-700 
+                            text-white 
+                            font-medium 
+                            py-1 
+                            px-3 
+                            rounded-full 
+                            transition-all 
+                            duration-200
+                          "
+                        >
+                          Edit
+                        </button>
+                        <button
+                          onClick={() => handleDelete(plan.id)}
+                          className="
+                            bg-red-600 
+                            hover:bg-red-700 
+                            text-white 
+                            font-medium 
+                            py-1 
+                            px-3 
+                            rounded-full 
+                            transition-all 
+                            duration-200
+                          "
+                        >
+                          Delete
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
+          </div>
         </div>
       </div>
-      {isAddMode || selectedPlan ? (
-        <PlanForm
-          plan={selectedPlan}
-          onClose={handleFormClose}
-          isEditMode={!isAddMode}
-        />
-      ) : null}
+
+      {/* Plan Form Modal */}
+      {(isAddMode || selectedPlan) && (
+        <div
+          className="
+            fixed 
+            inset-0 
+            bg-gray-900 
+            bg-opacity-50 
+            flex 
+            items-center 
+            justify-center 
+            p-4 
+            z-50
+          "
+        >
+          <div className="bg-white rounded-xl shadow-lg p-6 max-w-lg w-full animate-fade-in">
+            <PlanForm
+              plan={selectedPlan}
+              onClose={handleFormClose}
+              isEditMode={!isAddMode}
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 };

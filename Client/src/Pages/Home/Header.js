@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+
 const Header = () => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const images = [
@@ -13,87 +14,130 @@ const Header = () => {
       setCurrentImageIndex((prevIndex) =>
         prevIndex === images.length - 1 ? 0 : prevIndex + 1
       );
-    }, 3000); // Change image every 5 seconds
-
-    return () => {
-      clearInterval(interval);
-    };
+    }, 4000);
+    return () => clearInterval(interval);
   }, [images.length]);
+
   return (
-    <div>
-      <section className="text-gray-600 body-font bg-gradient-to-r from-blue-50 to-cyan-50">
-        <div className="container mx-auto flex px-5 py-24 md:flex-row flex-col items-center ">
-          <div className="lg:flex-grow md:w-1/2 lg:pr-24 md:pr-16 flex flex-col md:items-start md:text-left mb-16 md:mb-0 items-center text-center p-5">
-            <div className="text-blue-700/95 mb-5">
-              THE HEALTH INSURANCE SPECIALIST
-            </div>
-            <h1 className="title-font sm:text-4xl text-3xl mb-4 font-medium text-gray-900">
-              We have the answer to your happy
-              <br className="hidden lg:inline-block" />
-              and secure future
-            </h1>
-            <p className="mb-8 leading-relaxed">
-              Health plans for every stage of your life.
-            </p>
-            <div className="flex justify-center relative w-180 p-7 px-20 flex-col rounded-xl bg-white bg-clip-border text-gray-700 shadow-md">
-              <form>
-                <div className="grid gap-6 mb-6 md:grid-cols-2">
-                  <div>
-                    <label
-                      htmlFor="first_name"
-                      className="block mb-2 text-sm font-medium text-gray-900 light:text-white"
-                    >
-                      Name
-                    </label>
-                    <input
-                      type="text"
-                      id="first_name"
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 light:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 light:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                      placeholder="John"
-                      required=""
-                    />
-                  </div>
-                  <div>
-                    <label
-                      htmlFor="phone"
-                      className="block mb-2 text-sm font-medium text-gray-900 light:text-white"
-                    >
-                      Phone number
-                    </label>
-                    <input
-                      type="tel"
-                      id="phone"
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 light:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 light:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                      placeholder=" +91 1234567890"
-                      pattern="[0-9]{3}-[0-9]{2}-[0-9]{3}"
-                      required=""
-                    />
-                  </div>
+    <section className="relative bg-gradient-to-br from-indigo-50 via-blue-50 to-cyan-100 py-16 overflow-hidden">
+      <div className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center gap-12">
+        {/* Left Content */}
+        <div className="md:w-1/2 flex flex-col items-start text-left animate-fade-in">
+          <p className="text-sm font-semibold text-indigo-600 uppercase tracking-widest mb-3">
+            Health Insurance Leaders
+          </p>
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-gray-900 mb-5 leading-tight tracking-tight">
+            Your Health, <br /> Our Priority
+          </h1>
+          <p className="text-lg text-gray-700 mb-8 max-w-lg font-medium">
+            Expertly crafted plans for a healthier tomorrow.
+          </p>
+
+          {/* Glassmorphic Form */}
+          <div className="w-full max-w-md p-6 bg-white/20 backdrop-blur-lg border border-white/30 rounded-xl shadow-lg transform transition-all duration-300 hover:shadow-xl">
+            <form className="space-y-5">
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div>
+                  <label htmlFor="name" className="sr-only">
+                    Name
+                  </label>
+                  <input
+                    type="text"
+                    id="name"
+                    className="w-full px-4 py-2.5 bg-white/50 border border-gray-200/50 rounded-lg text-gray-900 focus:ring-2 focus:ring-indigo-400 focus:border-transparent transition-all duration-200 placeholder-gray-500"
+                    placeholder="Your Name"
+                    required
+                  />
                 </div>
-                <button
-                  type="submit"
-                  className="text-white bg-[#f97316] hover:bg-[#fb923c] focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-[#f97316] dark:hover:bg-[#f97316] dark:focus:ring-[#fb923c]"
-                >
-                  Get a quote &gt;
-                </button>
-              </form>
-            </div>
-          </div>
-          <div className="lg:max-w-lg lg:w-full md:w-1/2 w-10/6">
-            {images.map((image, index) => (
-              <img
-                key={index}
-                className={`object-cover object-center rounded ${
-                  index === currentImageIndex ? "block" : "hidden"
-                }`}
-                alt="hero"
-                src={image}
-              />
-            ))}
+                <div>
+                  <label htmlFor="phone" className="sr-only">
+                    Phone Number
+                  </label>
+                  <input
+                    type="tel"
+                    id="phone"
+                    className="w-full px-4 py-2.5 bg-white/50 border border-gray-200/50 rounded-lg text-gray-900 focus:ring-2 focus:ring-indigo-400 focus:border-transparent transition-all duration-200 placeholder-gray-500"
+                    placeholder="Phone Number"
+                    required
+                  />
+                </div>
+              </div>
+              <button
+                type="submit"
+                className="w-full bg-gradient-to-r from-indigo-600 to-blue-500 text-white font-semibold py-3 px-6 rounded-lg shadow-md hover:from-indigo-700 hover:to-blue-600 transition-all duration-300 transform hover:scale-105 focus:ring-4 focus:ring-indigo-300/50"
+              >
+                Get Your Quote
+              </button>
+            </form>
           </div>
         </div>
-      </section>
-    </div>
+
+        {/* Right Image Slider */}
+        <div className="md:w-1/2 relative animate-fade-in-right">
+          <div className="relative w-full max-w-lg mx-auto">
+            {images.map((image, index) => (
+              <div
+                key={index}
+                className={`w-full h-[400px] rounded-xl shadow-lg overflow-hidden transition-all duration-1000 ${
+                  index === currentImageIndex ? "opacity-100 scale-100" : "opacity-0 scale-95 absolute top-0"
+                }`}
+              >
+                <img
+                  className="w-full h-full object-cover"
+                  alt="Health Insurance Excellence"
+                  src={image}
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-gray-900/20 to-transparent"></div>
+              </div>
+            ))}
+            {/* Dots Navigation */}
+            <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-3">
+              {images.map((_, index) => (
+                <button
+                  key={index}
+                  className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${
+                    index === currentImageIndex
+                      ? "bg-white/90 scale-125 shadow-md"
+                      : "bg-white/50 hover:bg-white/70"
+                  }`}
+                  onClick={() => setCurrentImageIndex(index)}
+                />
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Advanced Decorative Elements */}
+        <div className="absolute top-0 right-0 w-48 h-48 bg-gradient-to-br from-indigo-300/20 to-blue-200/20 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute bottom-0 left-0 w-40 h-40 bg-gradient-to-tr from-cyan-200/20 to-blue-300/20 rounded-full blur-3xl animate-pulse delay-300"></div>
+        <div className="absolute top-1/2 left-1/4 w-24 h-24 bg-indigo-100/10 rounded-full blur-2xl animate-float"></div>
+      </div>
+
+      {/* Custom Animation Styles */}
+      <style jsx>{`
+        @keyframes fadeIn {
+          from { opacity: 0; transform: translateY(20px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeInRight {
+          from { opacity: 0; transform: translateX(20px); }
+          to { opacity: 1; transform: translateX(0); }
+        }
+        @keyframes float {
+          0%, 100% { transform: translateY(0); }
+          50% { transform: translateY(-10px); }
+        }
+        .animate-fade-in {
+          animation: fadeIn 0.8s ease-out forwards;
+        }
+        .animate-fade-in-right {
+          animation: fadeInRight 0.8s ease-out forwards;
+        }
+        .animate-float {
+          animation: float 4s ease-in-out infinite;
+        }
+      `}</style>
+    </section>
   );
 };
 

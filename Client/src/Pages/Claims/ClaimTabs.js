@@ -19,73 +19,55 @@ const ClaimTabs = () => {
     setActiveTab(tab);
   };
 
+  const tabs = [
+    { name: "Claim Imitation", icon: <FaRegCopy />, component: <ClaimImitation /> },
+    { name: "Claim Helpdesk", icon: <FaHeadset />, component: <ClaimHelpdesk /> },
+    { name: "Claim Upload", icon: <FaUpload />, component: <ClaimUpload /> },
+    { name: "Claim Process", icon: <FaCog />, component: <ClaimProcess /> },
+    { name: "Claim Status", icon: <FaInfoCircle />, component: <ClaimStatus /> },
+  ];
+
   return (
-    <div className="bg-white rounded-lg shadow-lg p-4">
-      <div className="flex items-center justify-center">
-        <button
-          className={`${
-            activeTab === "Claim Imitation"
-              ? "bg-blue-500 text-white"
-              : "bg-gray-200 text-gray-800"
-          } px-4 py-2 rounded-lg mr-4`}
-          onClick={() => handleTabClick("Claim Imitation")}
-        >
-          <FaRegCopy className="mr-2 inline-block" />
-          Claim Imitation
-        </button>
-        <button
-          className={`${
-            activeTab === "Claim Helpdesk"
-              ? "bg-blue-500 text-white"
-              : "bg-gray-200 text-gray-800"
-          } px-4 py-2 rounded-lg mr-4`}
-          onClick={() => handleTabClick("Claim Helpdesk")}
-        >
-          <FaHeadset className="mr-2 inline-block" />
-          Claim Helpdesk
-        </button>
-        <button
-          className={`${
-            activeTab === "Claim Upload"
-              ? "bg-blue-500 text-white"
-              : "bg-gray-200 text-gray-800"
-          } px-4 py-2 rounded-lg mr-4`}
-          onClick={() => handleTabClick("Claim Upload")}
-        >
-          <FaUpload className="mr-2 inline-block" />
-          Claim Upload
-        </button>
-        <button
-          className={`${
-            activeTab === "Claim Process"
-              ? "bg-blue-500 text-white"
-              : "bg-gray-200 text-gray-800"
-          } px-4 py-2 rounded-lg mr-4`}
-          onClick={() => handleTabClick("Claim Process")}
-        >
-          <FaCog className="mr-2 inline-block" />
-          Claim Process
-        </button>
-        {/* Add the Claim Status tab */}
-        <button
-          className={`${
-            activeTab === "Claim Status"
-              ? "bg-blue-500 text-white"
-              : "bg-gray-200 text-gray-800"
-          } px-4 py-2 rounded-lg mr-4`}
-          onClick={() => handleTabClick("Claim Status")}
-        >
-          <FaInfoCircle className="mr-2 inline-block" />
-          Claim Status
-        </button>
-      </div>
-      <div className="container mx-auto mt-8">
-        {activeTab === "Claim Imitation" && <ClaimImitation />}
-        {activeTab === "Claim Helpdesk" && <ClaimHelpdesk />}
-        {activeTab === "Claim Upload" && <ClaimUpload />}
-        {activeTab === "Claim Process" && <ClaimProcess />}
-        {activeTab === "Claim Status" && <ClaimStatus />}{" "}
-      </div>
+    <div className="min-h-screen bg-gray-100">
+      {/* Header */}
+      <header className="bg-gradient-to-r from-blue-600 to-blue-800 text-white py-12 md:py-16">
+        <div className="container mx-auto px-4 text-center">
+          <h1 className="text-3xl md:text-4xl font-bold tracking-tight mb-4">
+            Manage Your Health Insurance Claims
+          </h1>
+          <p className="text-lg md:text-xl text-blue-100 max-w-2xl mx-auto">
+            Explore all aspects of your claims process with ease and efficiency.
+          </p>
+        </div>
+      </header>
+
+      {/* Tabs Section */}
+      <section className="container mx-auto px-4 -mt-8">
+        <div className="bg-white rounded-xl shadow-lg p-6 md:p-8">
+          {/* Tab Navigation */}
+          <div className="flex flex-wrap justify-center gap-4 mb-8">
+            {tabs.map((tab) => (
+              <button
+                key={tab.name}
+                className={`flex items-center px-4 py-3 md:px-6 md:py-4 rounded-lg font-semibold transition-all duration-300 shadow-md ${
+                  activeTab === tab.name
+                    ? "bg-blue-600 text-white"
+                    : "bg-gray-200 text-gray-800 hover:bg-gray-300"
+                }`}
+                onClick={() => handleTabClick(tab.name)}
+              >
+                <span className="mr-2 text-lg">{tab.icon}</span>
+                {tab.name}
+              </button>
+            ))}
+          </div>
+
+          {/* Tab Content */}
+          <div className="transition-opacity duration-500 ease-in-out">
+            {tabs.find((tab) => tab.name === activeTab)?.component}
+          </div>
+        </div>
+      </section>
     </div>
   );
 };
